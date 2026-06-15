@@ -1,24 +1,45 @@
 /* ============================================================
    HASNA & JIMNAS WEDDING — JavaScript
    Scroll animations · Nav highlight · Lightbox · Cloudinary
-============================================================ */
+   ============================================================ */
 
-// ─── Envelope Logic ──────────────────────────────────────────
-(function initEnvelope() {
-  const envelope = document.getElementById('envelope-overlay');
+// ─── 3D Envelope Opening Flow ────────────────────────────────
+(function initEnvelopeFlow() {
+  const overlay = document.getElementById('envelope-overlay');
+  const envelope = document.getElementById('envelope');
   const btn = document.getElementById('open-envelope-btn');
-  if (!envelope || !btn) return;
+  const nav = document.getElementById('floating-nav');
 
-  document.body.style.overflow = 'hidden'; // Lock scroll initially
+  if (!overlay || !envelope || !btn) return;
+
+  // Initial setup: Lock scrolling
+  document.body.classList.add('envelope-locked');
   window.scrollTo(0, 0);
 
   btn.addEventListener('click', () => {
-    envelope.classList.add('open');
-    document.body.style.overflow = ''; // Unlock scroll
+    // 1. Break the seal
+    btn.classList.add('broken');
+
+    // 2. Open the envelope (flap folds up, card slides out)
+    setTimeout(() => {
+      envelope.classList.add('open');
+    }, 600);
+
+    // 3. Zoom/fade overlay out & reveal main website content
+    setTimeout(() => {
+      overlay.classList.add('hide-envelope');
+      document.body.classList.remove('envelope-locked');
+      
+      // Fade in nav bar
+      if (nav) nav.classList.add('visible');
+
+      // Initialize ambient particles after open
+      initAmbientParticles();
+    }, 2200);
   });
 })();
 
-// ─── Countdown Logic ─────────────────────────────────────────
+// ─── Countdown Timer ─────────────────────────────────────────
 (function initCountdown() {
   const targetDate = new Date('June 18, 2026 13:00:00').getTime();
   const daysEl = document.getElementById('cd-days');
@@ -28,13 +49,15 @@
 
   if (!daysEl) return;
 
-  function update() {
+  function updateTimer() {
     const now = new Date().getTime();
     const diff = targetDate - now;
 
     if (diff <= 0) {
-      daysEl.innerText = '00'; hoursEl.innerText = '00';
-      minsEl.innerText = '00'; secsEl.innerText = '00';
+      daysEl.innerText = '00';
+      hoursEl.innerText = '00';
+      minsEl.innerText = '00';
+      secsEl.innerText = '00';
       return;
     }
 
@@ -49,46 +72,71 @@
     secsEl.innerText = s.toString().padStart(2, '0');
   }
 
-  update();
-  setInterval(update, 1000);
+  updateTimer();
+  setInterval(updateTimer, 1000);
 })();
 
-// ─── Falling Particles ───────────────────────────────────────
-(function initParticles() {
-  const envContainer = document.getElementById('envelope-particles');
-  const mainContainer = document.getElementById('main-particles');
+// ─── Ambient Falling Particles ────────────────────────────────
+function initAmbientParticles() {
+  const container = document.getElementById('ambient-particles');
+  if (!container) return;
+
+  const particleTypes = ['🌸', '🍂', '✨', '❄️'];
   
-  function createParticle(container) {
-    if (!container) return;
-    const isFlower = Math.random() > 0.4;
-    const particle = document.createElement('div');
-    particle.className = `particle ${isFlower ? 'particle-flower' : 'particle-snow'}`;
+  function createParticle() {
+    const p = document.createElement('span');
+    const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
     
-    if (isFlower) {
-      particle.innerHTML = '🌸';
-      particle.style.fontSize = (Math.random() * 10 + 10) + 'px';
-    } else {
-      const size = Math.random() * 6 + 4;
-      particle.style.width = size + 'px';
-      particle.style.height = size + 'px';
-    }
-    
-    particle.style.left = Math.random() * 100 + 'vw';
-    const duration = Math.random() * 5 + 5; 
-    particle.style.animationDuration = duration + 's';
-    
-    container.appendChild(particle);
-    
+    p.className = 'ambient-particle';
+    p.innerText = type;
+
+    // Randomize position, scale, opacity, rotation, and speed
+    const left = Math.random() * 100;
+    const scale = Math.random() * 0.7 + 0.4;
+    const op = Math.random() * 0.5 + 0.3;
+    const rot = Math.random() * 360 + 180;
+    const sway = Math.random() * 60 - 30;
+    const duration = Math.random() * 8 + 6;
+
+    Object.assign(p.style, {
+      left: `${left}vw`,
+      fontSize: `${18 * scale}px`,
+      animationDuration: `${duration}s`,
+      '--op': op,
+      '--rot': `${rot}deg`,
+      '--sway': `${sway}px`
+    });
+
+    container.appendChild(p);
+
     setTimeout(() => {
-      particle.remove();
+      p.remove();
     }, duration * 1000);
   }
-  
-  setInterval(() => createParticle(envContainer), 300);
-  setInterval(() => createParticle(mainContainer), 600);
+
+  // Initial bursts
+  for (let i = 0; i < 15; i++) {
+    createParticle();
+  }
+
+  // Spawn interval
+  setInterval(createParticle, 500);
+}
+
+// ─── Gallery Infinite Marquee Track ───────────────────────────
+(function initMarqueeTrack() {
+  const track = document.getElementById('marquee-track');
+  if (!track) return;
+
+  // Clone original items to double the width and achieve a seamless loop
+  const children = Array.from(track.children);
+  children.forEach(child => {
+    const clone = child.cloneNode(true);
+    track.appendChild(clone);
+  });
 })();
 
-// ─── Scroll-reveal with IntersectionObserver ─────────────────
+// ─── Scroll Reveal with IntersectionObserver ──────────────────
 (function initReveal() {
   const targets = document.querySelectorAll('.reveal');
   if (!targets.length) return;
@@ -102,15 +150,15 @@
         }
       });
     },
-    { threshold: 0.12, rootMargin: '0px 0px -60px 0px' }
+    { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
   );
 
   targets.forEach((el) => observer.observe(el));
 })();
 
-// ─── Active nav on scroll ─────────────────────────────────────
+// ─── Active Nav Indicator on Scroll ───────────────────────────
 (function initNavHighlight() {
-  const sections = ['hero', 'couple', 'events', 'gallery', 'blessings'];
+  const sections = ['hero', 'countdown', 'story', 'events', 'gallery', 'venue', 'blessings'];
   const navLinks = document.querySelectorAll('.nav-link');
   if (!navLinks.length) return;
 
@@ -125,7 +173,7 @@
         }
       });
     },
-    { threshold: 0.35 }
+    { threshold: 0.2, rootMargin: '-10% 0px -60% 0px' }
   );
 
   sections.forEach((id) => {
@@ -134,40 +182,36 @@
   });
 })();
 
-// ─── Parallax hero on scroll ──────────────────────────────────
-(function initHeroParallax() {
-  const heroBg = document.querySelector('.hero-bg');
-  if (!heroBg) return;
-
-  let ticking = false;
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      requestAnimationFrame(() => {
-        const scrollY = window.scrollY;
-        heroBg.style.transform = `scale(1.05) translateY(${scrollY * 0.25}px)`;
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }, { passive: true });
-})();
-
-// ─── Smooth scroll for anchor links ──────────────────────────
+// ─── Smooth Scroll ───────────────────────────────────────────
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   anchor.addEventListener('click', function (e) {
     const targetId = this.getAttribute('href').slice(1);
     const target = document.getElementById(targetId);
     if (!target) return;
     e.preventDefault();
+    
     const offset = 80;
     const top = target.getBoundingClientRect().top + window.scrollY - offset;
     window.scrollTo({ top, behavior: 'smooth' });
   });
 });
 
-// ─── Gallery Lightbox ─────────────────────────────────────────
+// ─── Hero Scroll Indicator Click ─────────────────────────────
+(function initScrollHint() {
+  const hint = document.getElementById('hero-scroll-hint');
+  if (!hint) return;
+  hint.addEventListener('click', () => {
+    const target = document.getElementById('countdown');
+    if (!target) return;
+    const offset = 80;
+    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+  });
+})();
+
+// ─── Lightbox Modal Viewer ───────────────────────────────────
 (function initLightbox() {
-  const galleryItems = document.querySelectorAll('.gallery-item');
+  const galleryCards = document.querySelectorAll('.gallery-card');
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img');
   const closeBtn = document.getElementById('lightbox-close');
@@ -176,7 +220,7 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
 
   function openLightbox(src, alt) {
     lightboxImg.src = src;
-    lightboxImg.alt = alt || '';
+    lightboxImg.alt = alt || 'Wedding Photo';
     lightbox.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -184,25 +228,17 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   function closeLightbox() {
     lightbox.classList.remove('open');
     document.body.style.overflow = '';
-    setTimeout(() => { lightboxImg.src = ''; }, 350);
+    setTimeout(() => { lightboxImg.src = ''; }, 300);
   }
 
-  galleryItems.forEach((item) => {
-    item.addEventListener('click', () => {
-      const img = item.querySelector('img');
-      if (img) openLightbox(img.src, img.alt);
-    });
-
-    // Keyboard support
-    item.setAttribute('tabindex', '0');
-    item.setAttribute('role', 'button');
-    item.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        const img = item.querySelector('img');
-        if (img) openLightbox(img.src, img.alt);
-      }
-    });
+  // Attach click to gallery marquee cards (both original and cloned)
+  document.getElementById('marquee-track').addEventListener('click', (e) => {
+    const card = e.target.closest('.gallery-card');
+    if (!card) return;
+    const img = card.querySelector('img');
+    if (img) {
+      openLightbox(img.src, img.alt);
+    }
   });
 
   closeBtn?.addEventListener('click', closeLightbox);
@@ -218,7 +254,6 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
 
 // ─── Cloudinary Upload Widget ─────────────────────────────────
 function openCloudinaryUpload() {
-  // Cloudinary account: dzbonbmvv  |  folder: hasna wedding
   if (typeof cloudinary === 'undefined') {
     alert('Upload widget is loading. Please try again in a moment.');
     return;
@@ -227,11 +262,11 @@ function openCloudinaryUpload() {
   const widget = cloudinary.createUploadWidget(
     {
       cloudName: 'dzbonbmvv',
-      uploadPreset: 'ml_default',          // Using default unsigned preset
-      folder: 'hasna wedding',             // Save into hasna wedding folder
+      uploadPreset: 'ml_default',
+      folder: 'hasna wedding',
       multiple: true,
       maxFiles: 20,
-      maxFileSize: 15000000,               // 15 MB per file
+      maxFileSize: 15000000, // 15 MB
       clientAllowedFormats: ['image'],
       sources: ['local', 'camera', 'google_drive', 'dropbox'],
       theme: 'minimal',
@@ -244,22 +279,22 @@ function openCloudinaryUpload() {
       },
       styles: {
         palette: {
-          window: '#1a0a2e',
-          windowBorder: '#d4af37',
-          tabIcon: '#d4af37',
-          menuIcons: '#d4af37',
-          textDark: '#f5e9d8',
-          textLight: '#f5e9d8',
-          link: '#d4af37',
-          action: '#d4af37',
-          inactiveTabIcon: '#9b8fb8',
+          window: '#140526',
+          windowBorder: '#c8a063',
+          tabIcon: '#c8a063',
+          menuIcons: '#c8a063',
+          textDark: '#f4e2bd',
+          textLight: '#f4e2bd',
+          link: '#c8a063',
+          action: '#c8a063',
+          inactiveTabIcon: '#6b4c9e',
           error: '#f44336',
-          inProgress: '#d4af37',
+          inProgress: '#c8a063',
           complete: '#4caf50',
-          sourceBg: '#2d1055',
+          sourceBg: '#230b3d',
         },
         fonts: {
-          '"Playfair Display", serif': 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500',
+          '"Cinzel", serif': 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500',
         },
       },
     },
@@ -272,7 +307,7 @@ function openCloudinaryUpload() {
       if (result.event === 'success') {
         const info = result.info;
         console.log('Upload successful:', info.secure_url);
-        showUploadSuccess(info.original_filename);
+        showUploadSuccess();
       }
     }
   );
@@ -280,7 +315,7 @@ function openCloudinaryUpload() {
   widget.open();
 }
 
-function showUploadSuccess(filename) {
+function showUploadSuccess() {
   const existing = document.getElementById('upload-success-toast');
   if (existing) existing.remove();
 
@@ -295,29 +330,6 @@ function showUploadSuccess(filename) {
     </svg>
     <span>Photo uploaded successfully! ✨</span>
   `;
-
-  Object.assign(toast.style, {
-    position: 'fixed',
-    bottom: '5rem',
-    left: '50%',
-    transform: 'translateX(-50%) translateY(20px)',
-    background: 'linear-gradient(135deg, #2d1055, #1a0a2e)',
-    color: '#e2c870',
-    border: '1px solid rgba(212,175,55,0.45)',
-    borderRadius: '50px',
-    padding: '0.85rem 1.75rem',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.6rem',
-    fontSize: '0.82rem',
-    fontFamily: "'Inter', sans-serif",
-    fontWeight: '600',
-    zIndex: '300',
-    boxShadow: '0 16px 48px -12px rgba(26,10,46,0.6)',
-    backdropFilter: 'blur(12px)',
-    opacity: '0',
-    transition: 'opacity 0.35s, transform 0.35s',
-  });
 
   document.body.appendChild(toast);
 
@@ -336,63 +348,3 @@ function showUploadSuccess(filename) {
     setTimeout(() => toast.remove(), 400);
   }, 4000);
 }
-
-// ─── Gold particle floating animation on hero ─────────────────
-(function initGoldParticles() {
-  const hero = document.getElementById('hero');
-  if (!hero) return;
-
-  const COUNT = 8;
-  for (let i = 0; i < COUNT; i++) {
-    const dot = document.createElement('span');
-    const size = Math.random() * 4 + 2;
-    const left = Math.random() * 100;
-    const delay = Math.random() * 6;
-    const duration = Math.random() * 8 + 8;
-
-    Object.assign(dot.style, {
-      position: 'absolute',
-      width: size + 'px',
-      height: size + 'px',
-      borderRadius: '50%',
-      background: 'rgba(212,175,55,0.6)',
-      left: left + '%',
-      bottom: '-10px',
-      opacity: '0',
-      pointerEvents: 'none',
-      zIndex: '5',
-      animation: `floatUp ${duration}s ${delay}s infinite`,
-    });
-
-    hero.appendChild(dot);
-  }
-
-  // Inject keyframes if not already present
-  if (!document.getElementById('particle-keyframes')) {
-    const style = document.createElement('style');
-    style.id = 'particle-keyframes';
-    style.textContent = `
-      @keyframes floatUp {
-        0% { opacity: 0; transform: translateY(0) scale(0.5); }
-        10% { opacity: 0.7; }
-        80% { opacity: 0.3; }
-        100% { opacity: 0; transform: translateY(-100vh) scale(1.5); }
-      }
-    `;
-    document.head.appendChild(style);
-  }
-})();
-
-// ─── Entrance animation for hero content ──────────────────────
-(function initHeroEntrance() {
-  const content = document.getElementById('hero-content');
-  if (!content) return;
-  content.style.opacity = '0';
-  content.style.transform = 'translateY(20px)';
-
-  setTimeout(() => {
-    content.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
-    content.style.opacity = '1';
-    content.style.transform = 'translateY(0)';
-  }, 200);
-})();
