@@ -165,7 +165,7 @@ a { color: inherit; text-decoration: none; }
   background: var(--ivory-paper);
   border-radius: 4px;
   border: 2px solid var(--gold-mid);
-  padding: 1.5rem;
+  padding: clamp(0.75rem, 3vw, 1.5rem);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -179,7 +179,7 @@ a { color: inherit; text-decoration: none; }
 
 .envelope-card .card-dear {
   font-family: var(--font-serif);
-  font-size: clamp(0.85rem, 2vw, 1.1rem);
+  font-size: clamp(0.8rem, 2vw, 1.1rem);
   letter-spacing: 0.15em;
   color: var(--gold-dark);
   margin-bottom: 0.25rem;
@@ -187,7 +187,7 @@ a { color: inherit; text-decoration: none; }
 
 .envelope-card .card-intro {
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: clamp(0.65rem, 1.5vw, 0.72rem);
   text-transform: uppercase;
   letter-spacing: 0.2em;
   color: var(--text-dark-muted);
@@ -196,8 +196,8 @@ a { color: inherit; text-decoration: none; }
 
 .envelope-card .card-names {
   font-family: var(--font-script);
-  font-size: clamp(1.8rem, 5vw, 2.5rem);
-  line-height: 1;
+  font-size: clamp(1.4rem, 4.5vw, 2.5rem);
+  line-height: 1.1;
   color: var(--text-dark);
   margin-bottom: 0.5rem;
 }
@@ -219,7 +219,7 @@ a { color: inherit; text-decoration: none; }
 
 .envelope-card .card-date {
   font-family: var(--font-serif);
-  font-size: 0.75rem;
+  font-size: clamp(0.7rem, 2vw, 0.85rem);
   letter-spacing: 0.25em;
   color: var(--gold-dark);
 }
@@ -430,6 +430,7 @@ section {
   position: relative;
   width: 100%;
   z-index: 1;
+  scroll-margin-top: clamp(2rem, 8vh, 6rem);
 }
 
 .section-container {
@@ -552,13 +553,19 @@ section {
   background-color: var(--ivory-paper);
   border-radius: 4px;
   box-shadow: var(--shadow-premium);
-  aspect-ratio: 1024 / 1536;
   width: 100%;
-  padding: 8% 7% 7%;
+  padding: 2.5rem 1.5rem;
   border: 1px solid rgba(200, 160, 99, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+@media (min-width: 600px) {
+  .hero-stamp-card {
+    aspect-ratio: 1024 / 1536;
+    padding: 8% 7% 7%;
+  }
 }
 
 /* Stamp edge perforations in pure CSS */
@@ -575,7 +582,7 @@ section {
   border: 1.5px solid var(--gold-mid);
   width: 100%;
   height: 100%;
-  padding: 10% 6%;
+  padding: 2.5rem 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -584,13 +591,19 @@ section {
   position: relative;
 }
 
+@media (min-width: 600px) {
+  .hero-card-inner {
+    padding: 10% 6%;
+  }
+}
+
 .hero-card-intro {
   font-family: var(--font-serif);
   font-size: clamp(0.65rem, 2vw, 0.85rem);
   letter-spacing: 0.35em;
   text-transform: uppercase;
   color: var(--gold-dark);
-  margin-bottom: 7%;
+  margin-bottom: 4%;
 }
 
 .hero-card-names {
@@ -603,11 +616,11 @@ section {
 
 .hero-card-names h1 {
   font-family: var(--font-serif);
-  font-size: clamp(1.4rem, 5vw, 2.4rem);
+  font-size: clamp(1.1rem, 4.8vw, 2.4rem);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  line-height: 1.1;
+  line-height: 1.25;
   width: 100%;
   word-break: break-word;
 }
@@ -856,7 +869,12 @@ section {
 .programme-card-wrapper {
   width: 100%;
   max-width: 320px;
-  aspect-ratio: 1024 / 1536;
+}
+
+@media (min-width: 600px) {
+  .programme-card-wrapper {
+    aspect-ratio: 1024 / 1536;
+  }
 }
 
 .programme-card {
@@ -867,7 +885,13 @@ section {
   border-radius: 4px;
   border: 1px solid rgba(200,160,99,0.2);
   box-shadow: var(--shadow-premium);
-  padding: 6%;
+  padding: 1.25rem;
+}
+
+@media (min-width: 600px) {
+  .programme-card {
+    padding: 6%;
+  }
 }
 
 .programme-card-inner {
@@ -879,8 +903,14 @@ section {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 12% 8%;
+  padding: 2.25rem 1.25rem;
   position: relative;
+}
+
+@media (min-width: 600px) {
+  .programme-card-inner {
+    padding: 12% 8%;
+  }
 }
 
 .programme-no {
@@ -1488,5 +1518,30 @@ footer {
     flex-direction: column;
     align-items: center;
     gap: 1.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .envelope-card {
+    padding: 0.5rem;
+  }
+  .envelope-card .card-dear {
+    font-size: 0.72rem;
+    margin-bottom: 0.1rem;
+  }
+  .envelope-card .card-intro {
+    font-size: 0.58rem;
+    margin-bottom: 0.2rem;
+  }
+  .envelope-card .card-names {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+  }
+  .envelope-card .card-line {
+    margin: 0.25rem auto;
+    width: 25px;
+  }
+  .envelope-card .card-date {
+    font-size: 0.65rem;
   }
 }
