@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Great+Vibes&family=Inter:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- Cloudinary Upload Widget -->
+  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -338,24 +340,44 @@
         <div class="marquee-track" id="marquee-track">
           <!-- Slide 1 -->
           <div class="gallery-card">
-            <img src="bride1.jpeg" alt="Hasna holding cake close up" loading="lazy" />
+            <img src="bride2.jpeg" alt="Hasna facing the hills holding cake" loading="lazy" />
           </div>
           <!-- Slide 2 -->
           <div class="gallery-card">
-            <img src="bride2.jpeg" alt="Hasna standing near white car" loading="lazy" />
+            <img src="bride3.jpeg" alt="Hasna holding wedding cake close up" loading="lazy" />
           </div>
           <!-- Slide 3 -->
           <div class="gallery-card">
-            <img src="bride3.jpeg" alt="Hasna holding cake in front of hills" loading="lazy" />
+            <img src="couple.jpeg" alt="Hasna and Jimnas couple photo" loading="lazy" />
           </div>
           <!-- Slide 4 -->
           <div class="gallery-card">
-            <img src="couple.jpeg" alt="Hasna and Jimnas" loading="lazy" />
+            <img src="walima.jpeg" alt="Hasna standing near the wedding car" loading="lazy" />
           </div>
-          <!-- Slide 5 -->
-          <div class="gallery-card">
-            <img src="walima.jpeg" alt="Wedding celebration photo" loading="lazy" />
+        </div>
+      </div>
+
+      <!-- Cloudinary Upload -->
+      <div class="upload-card-wrapper reveal">
+        <div class="upload-card">
+          <div class="upload-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
           </div>
+          <h3 class="upload-title">Share Your Memories</h3>
+          <p class="upload-text">
+            Upload your photos to our shared wedding gallery album on Cloudinary to help us capture every moment.
+          </p>
+          <button class="btn-upload" onclick="openCloudinaryUpload()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <span>Upload Photos</span>
+          </button>
+          <p class="upload-note">Photos will be saved to the Hasna &amp; Jimnas wedding album</p>
         </div>
       </div>
     </section>

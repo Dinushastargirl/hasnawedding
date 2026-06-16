@@ -308,6 +308,21 @@ function openCloudinaryUpload() {
         const info = result.info;
         console.log('Upload successful:', info.secure_url);
         showUploadSuccess();
+
+        // Add the uploaded image to the gallery marquee dynamically
+        const track = document.getElementById('marquee-track');
+        if (track) {
+          const newCard = document.createElement('div');
+          newCard.className = 'gallery-card';
+          
+          const newImg = document.createElement('img');
+          newImg.src = info.secure_url;
+          newImg.alt = 'Uploaded Wedding Photo';
+          newImg.loading = 'lazy';
+          
+          newCard.appendChild(newImg);
+          track.appendChild(newCard);
+        }
       }
     }
   );
